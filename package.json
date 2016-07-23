@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "token module for microservices",
   "main": "index.js",
-"scripts": {
+  "scripts": {
     "test": "mocha --recursive --timeout 5000",
     "//": "To use: npm run test-nodemon (assumes global location of mocha)",
     "test-nodemon": "nodemon /usr/local/bin/mocha --timeout 5000"
@@ -13,5 +13,13 @@
     "url": "https://bitbucket.org/mitchallen/microservice-tokan.git"
   },
   "author": "Mitch Allen <npm@mitchallen.com> (http://mitchallen.com)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "jwt-simple": "^0.5.0"
+  },
+  "devDependencies": {
+    "@mitchallen/microservice-core": "^0.2.2",
+    "should": "^10.0.0",
+    "supertest": "^1.2.0"
+  }
 }
