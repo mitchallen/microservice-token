@@ -1,6 +1,6 @@
 {
   "name": "@mitchallen/microservice-token",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "token module for microservices",
   "main": "index.js",
 "scripts": {
