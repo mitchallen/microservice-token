@@ -8,9 +8,9 @@
  * var token = require( '@mitchallen/microservice-token' )( _secret );
  * var rights = ...
  * 
- * app.use( token );
+ * router.use( token );
  *
- * router.get('/heartbeat', token, rights, function (req, res) { ... }
+ * router.get('/heartbeat', rights, function (req, res) { ... }
  * 
  */
 
@@ -31,8 +31,8 @@ module.exports = function (secret) {
                 if (secret) {
                     req.token = jwt.decode(req.headers['x-auth'], secret);
                 } else {
-                    emsg = "ERROR: secret is null, can't decode token. See: .secret()";
-                    return next({ status: 500, message: emsg, type: 'internal' });
+                    emsg = "ERRNULLSECRET: secret is null, can't decode token. See: .secret()";
+                    return next(emsg)
                 }
             } catch (ex) {
                 // If secret doesn't match, will get error:
@@ -42,7 +42,7 @@ module.exports = function (secret) {
                 // If slightly hacked token:
                 //   [SyntaxError: Unexpected token]
                 emsg = "ERROR: jwt.decode: " + ex;
-                return next({ status: 500, message: emsg, type: 'internal' });
+                return next(emsg);
             }
         }
         next();

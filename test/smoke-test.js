@@ -40,7 +40,8 @@ describe('microservice core smoke test', function() {
                 apiVersion: "/test1",
                 method: function (info) {
                     var router = info.router;
-                    router.get('/heartbeat', tokenHandler, function (req, res) {
+                    router.use(tokenHandler);
+                    router.get('/heartbeat', function (req, res) {
                         var data = {
                             type: dataType,
                             status: dataStatus,
@@ -71,6 +72,57 @@ describe('microservice core smoke test', function() {
                 res.body.type.should.eql(dataType);
                 should.exist(res.body.status);
                 res.body.status.should.eql(dataStatus);
+                server.close(done);
+            });
+    });
+
+    it('should return an error for a null secret', function(done) {
+
+        let secret = "mySecret";
+
+        // Pass in a null secret here to generate an error
+        let tokenHandler = require('../index')(null);
+
+        should.exist(tokenHandler);
+
+        var options = {
+            service: {
+                name: testName,
+                version: testVersion,
+                verbose: verbose,
+                port: testPort,
+                apiVersion: "/test1",
+                method: function (info) {
+                    var router = info.router;
+                    router.use(tokenHandler);
+                    router.get('/heartbeat', function (req, res) {
+                        var data = {
+                            type: dataType,
+                            status: dataStatus,
+                        };
+                        res.json(data);
+                    });
+                    return router;
+                }
+            }
+        };
+        
+        // Needed for cleanup between tests
+        delete require.cache[require.resolve(coreModulePath)];
+        var retObj = require(coreModulePath)(options);
+        should.exist(retObj);
+        var server = retObj.server;
+        should.exist(server);
+        
+        var testUrl =  prefix + path;
+        request(testHost)
+            .get(testUrl)
+            .set('x-auth', jwt.encode( { username: "Mitch", role: "user" }, secret))
+            .expect(500)
+            .end(function (err, res){
+                should.not.exist(err);
+                should.exist(res.body);
+                res.text.should.containEql('ERRNULLSECRET');
                 server.close(done);
             });
     });
