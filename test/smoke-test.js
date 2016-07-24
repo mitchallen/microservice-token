@@ -126,4 +126,57 @@ describe('microservice core smoke test', function() {
                 server.close(done);
             });
     });
+
+    it('should return an error if secret does not match', function(done) {
+
+        let secret = "mySecret";
+        let badSecret = "bogus";
+
+        // Pass in a bad secret here to generate an error
+        let tokenHandler = require('../index')(badSecret);
+
+        should.exist(tokenHandler);
+
+        var options = {
+            service: {
+                name: testName,
+                version: testVersion,
+                verbose: verbose,
+                port: testPort,
+                apiVersion: "/test1",
+                method: function (info) {
+                    var router = info.router;
+                    router.use(tokenHandler);
+                    router.get('/heartbeat', function (req, res) {
+                        var data = {
+                            type: dataType,
+                            status: dataStatus,
+                        };
+                        res.json(data);
+                    });
+                    return router;
+                }
+            }
+        };
+        
+        // Needed for cleanup between tests
+        delete require.cache[require.resolve(coreModulePath)];
+        var retObj = require(coreModulePath)(options);
+        should.exist(retObj);
+        var server = retObj.server;
+        should.exist(server);
+        
+        var testUrl =  prefix + path;
+        request(testHost)
+            .get(testUrl)
+            .set('x-auth', jwt.encode( { username: "Mitch", role: "user" }, secret))
+            .expect(500)
+            .end(function (err, res){
+                should.not.exist(err);
+                should.exist(res.body);
+                res.text.should.containEql('Signature verification failed');
+                server.close(done);
+            });
+    });
+
 });
