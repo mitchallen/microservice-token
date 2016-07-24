@@ -74,5 +74,4 @@ describe('microservice core smoke test', function() {
                 server.close(done);
             });
     });
-
 });
