@@ -25,6 +25,14 @@ describe('microservice core smoke test', function() {
 
     it('should get url with token', function(done) {
 
+        let testUser = "Jack";
+        let testRole = "admin";
+
+        let testData = {
+            user: testUser,
+            role: testRole
+        }
+
         let secret = "mySecret";
 
         let tokenHandler = require('../index')(secret);
@@ -42,6 +50,12 @@ describe('microservice core smoke test', function() {
                     var router = info.router;
                     router.use(tokenHandler);
                     router.get('/heartbeat', function (req, res) {
+                        should.exist(req.token);
+                        // console.log(JSON.stringify(req.token));
+                        should.exist(req.token.user);
+                        should.exist(req.token.role);
+                        req.token.user.should.eql(testUser);
+                        req.token.role.should.eql(testRole);
                         var data = {
                             type: dataType,
                             status: dataStatus,
@@ -63,7 +77,8 @@ describe('microservice core smoke test', function() {
         var testUrl =  prefix + path;
         request(testHost)
             .get(testUrl)
-            .set('x-auth', jwt.encode({ username: "Mitch", role: "user" }, secret))
+            .set('x-auth', jwt.encode( testData, secret))
+            .set('Content-Type', 'application/json')
             .expect(200)
             .end(function (err, res){
                 should.not.exist(err);
@@ -175,6 +190,58 @@ describe('microservice core smoke test', function() {
                 should.not.exist(err);
                 should.exist(res.body);
                 res.text.should.containEql('Signature verification failed');
+                server.close(done);
+            });
+    });
+
+    it('should return an error if token is random string', function(done) {
+
+        let secret = "mySecret";
+        let badSecret = "bogus";
+
+        // Pass in a bad secret here to generate an error
+        let tokenHandler = require('../index')(badSecret);
+
+        should.exist(tokenHandler);
+
+        var options = {
+            service: {
+                name: testName,
+                version: testVersion,
+                verbose: verbose,
+                port: testPort,
+                apiVersion: "/test1",
+                method: function (info) {
+                    var router = info.router;
+                    router.use(tokenHandler);
+                    router.get('/heartbeat', function (req, res) {
+                        var data = {
+                            type: dataType,
+                            status: dataStatus,
+                        };
+                        res.json(data);
+                    });
+                    return router;
+                }
+            }
+        };
+        
+        // Needed for cleanup between tests
+        delete require.cache[require.resolve(coreModulePath)];
+        var retObj = require(coreModulePath)(options);
+        should.exist(retObj);
+        var server = retObj.server;
+        should.exist(server);
+        
+        var testUrl =  prefix + path;
+        request(testHost)
+            .get(testUrl)
+            .set('x-auth', 'BAD-TOKEN-STRING')
+            .expect(500)
+            .end(function (err, res){
+                should.not.exist(err);
+                should.exist(res.body);
+                res.text.should.containEql('Not enough or too many segments');
                 server.close(done);
             });
     });

@@ -3,18 +3,19 @@
     author: Mitch Allen
 */
 
-/* Usage: 
+/* Usage:
  *
  * var token = require( '@mitchallen/microservice-token' )( _secret );
- * var rights = ...
- * 
+ *
  * router.use( token );
  *
- * router.get('/heartbeat', rights, function (req, res) { ... }
- * 
+ * router.get('/heartbeat', function (req, res) { ... }
+ *
  */
 
 /*jslint es6 */
+
+"use strict";
 
 var jwt = require('jwt-simple');
 
@@ -24,15 +25,15 @@ module.exports = function (secret) {
         var emsg = "";
         if (!req) {
             emsg = "INTERNAL ERROR (getToken): req not defined.";
-            return next({ status: 500, message: emsg, type: 'internal' });
+            return next(emsg);
         }
         if (req.headers['x-auth']) {
             try {
                 if (secret) {
                     req.token = jwt.decode(req.headers['x-auth'], secret);
                 } else {
-                    emsg = "ERRNULLSECRET: secret is null, can't decode token. See: .secret()";
-                    return next(emsg)
+                    emsg = "ERRNULLSECRET: secret is null, can't decode token";
+                    return next(emsg);
                 }
             } catch (ex) {
                 // If secret doesn't match, will get error:
