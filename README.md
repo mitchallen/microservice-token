@@ -56,7 +56,7 @@ See the test cases for more examples.
 
 If you want to build a login service, I strongly suggest that you check out options like [Amazon Cognito](https://aws.amazon.com/cognito/).  But if you are building something simple, internal or just want to roll your own, here is one idea. __Again, use at our own risk.__
 
-1. User logins
+1. User logs in
 2. An encrypted token is returned by the login service containing things like the user name and role
 3. The token is passed along in the __x-auth__ header to all other requests while the user is logged in
 4. Thanks to the middleware, every route handler receives the decoded values contained in __req.token__
