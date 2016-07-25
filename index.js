@@ -1,5 +1,5 @@
 /**
-    module: @mitchallen/microservice-core
+    module: @mitchallen/microservice-token
     author: Mitch Allen
 */
 

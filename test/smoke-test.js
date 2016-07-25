@@ -1,5 +1,5 @@
 /**
-    Module: @mitchallen/microservice-core
+    Module: @mitchallen/microservice-token
       Test: smoke-test
     Author: Mitch Allen
 */
@@ -15,7 +15,7 @@ var request = require('supertest'),
     testPort = process.env.TEST_SERVICE_PORT || 8100,
     testHost = "http://localhost:" + testPort;
 
-describe('microservice core smoke test', function() {
+describe('microservice token smoke test', function() {
 
     let coreModulePath = "@mitchallen/microservice-core";
     let prefix = "/test1";
