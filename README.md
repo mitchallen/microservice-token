@@ -92,6 +92,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.1.1 release notes
+
+* fixed package git repo path type-o
+
 #### Version 0.1.0 release notes
 
 * initial release

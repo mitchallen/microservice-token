@@ -1,6 +1,6 @@
 {
   "name": "@mitchallen/microservice-token",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "token module for microservices",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/mitchallen/microservice-tokan.git"
+    "url": "https://bitbucket.org/mitchallen/microservice-token.git"
   },
   "author": "Mitch Allen <npm@mitchallen.com> (http://mitchallen.com)",
   "license": "ISC",
