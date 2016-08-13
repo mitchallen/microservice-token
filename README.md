@@ -80,6 +80,7 @@ To test, go to the root folder and type (sans __$__):
 ## Repo(s)
 
 * [bitbucket.org/mitchallen/microservice-token.git](https://bitbucket.org/mitchallen/microservice-token.git)
+* [github.com/mitchallen/microservice-token.git](https://github.com/mitchallen/microservice-token.git)
 
 * * *
 
